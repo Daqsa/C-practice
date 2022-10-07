@@ -1,0 +1,114 @@
+#use <conio>
+typedef struct list_node list;
+struct list_node
+{
+    int data;
+    list* next;
+};
+
+struct segment_header
+{
+    list* start;
+    list* end;
+};
+typedef struct segment_header* list_segment;
+
+// implement the tortoise-hare algorithm
+bool is_cycle(list* l)
+{
+    list* slow = l;
+    list* fast = l;
+
+    while (fast != NULL)
+    {
+        if (slow != NULL)
+        {
+            slow = slow->next;
+        }
+        
+        fast = fast->next;
+        if (fast != NULL)
+        {
+            fast = fast->next;
+        }
+
+        // the hare caught up to the tortoise;
+        // detected cycle
+        if (slow == fast) return true;
+    }
+    return false;
+}
+
+
+
+
+// is a segment if I can keep taking next element all the way to end
+bool is_segment(list* start, list* end)
+{
+    list* curr = start;
+    while (curr != NULL)
+    {
+        if (curr == end) return true;
+        curr = curr->next;
+    }
+    return false;
+}
+
+
+// inputs a int array and its length
+// makes a list segment containing those integers
+// returns the starting list node
+list* list_toLinkedList(int[] A, int n)
+//@requires \length(A) == n;
+//@ensures !is_cycle(\result);
+{
+    list* l = alloc(list);
+    list* curr = l;
+    for (int i = 0; i < n; i++)
+    //@loop_invariant curr != NULL;
+    //@loop_invariant 0 <= i && i <= n;
+    {
+        curr->data = A[i];
+        curr->next = alloc(list);
+        curr = curr->next;
+    }
+    curr = NULL;
+    return l;
+}
+
+void print_LinkedList(list* l)
+//@requires !is_cycle(l);    
+{
+    list* curr = l;
+    while (curr != NULL)
+    {
+        printf("%d ", curr->data);
+        curr = curr->next;
+    }
+    printf("\n");
+}
+
+// returns a new array of length n
+// with ith index has value i
+int[] make_new_array(int n)
+//@requires 0 <= n;
+//@ensures \length(\result) == n;
+{
+    int[] A = alloc_array(int, 0);
+    for (int i = 0; i < n; i++)
+    {
+        A[i] = i;
+    }
+    return A;
+}
+
+int main()
+{
+    int[] A = make_new_array(10);
+    list* l1 = list_toLinkedList(A, 10);
+    print_LinkedList(l1);
+
+
+
+    return 0;
+}
